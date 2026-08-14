@@ -6,59 +6,35 @@
 #define AUDIO_INPUT_SAMPLE_RATE  16000
 #define AUDIO_OUTPUT_SAMPLE_RATE 24000
 
-// 如果使用 Duplex I2S 模式，请注释下面一行
-#define AUDIO_I2S_METHOD_SIMPLEX
+// Раскомментируем Duplex (убираем SIMPLEX), чтобы разгрузить пины и объединить такты I2S
+//#define AUDIO_I2S_METHOD_SIMPLEX
 
 #ifdef AUDIO_I2S_METHOD_SIMPLEX
-
-#define AUDIO_I2S_MIC_GPIO_WS   GPIO_NUM_4
-#define AUDIO_I2S_MIC_GPIO_SCK  GPIO_NUM_5
-#define AUDIO_I2S_MIC_GPIO_DIN  GPIO_NUM_6
-#define AUDIO_I2S_SPK_GPIO_DOUT GPIO_NUM_7
-#define AUDIO_I2S_SPK_GPIO_BCLK GPIO_NUM_15
-#define AUDIO_I2S_SPK_GPIO_LRCK GPIO_NUM_16
-
+// Этот блок пропустится
 #else
-
-#define AUDIO_I2S_GPIO_WS GPIO_NUM_4
-#define AUDIO_I2S_GPIO_BCLK GPIO_NUM_5
-#define AUDIO_I2S_GPIO_DIN  GPIO_NUM_6
-#define AUDIO_I2S_GPIO_DOUT GPIO_NUM_7
-
+// ЗВУК ДЛЯ ESP32-C3:
+#define AUDIO_I2S_GPIO_WS   GPIO_NUM_6  // LRC / WS
+#define AUDIO_I2S_GPIO_BCLK GPIO_NUM_5  // BCLK / SCK
+#define AUDIO_I2S_GPIO_DIN  GPIO_NUM_4  // SD (Микрофон)
+#define AUDIO_I2S_GPIO_DOUT GPIO_NUM_7  // DIN (Усилитель MAX98357A)
 #endif
 
-#define BUILTIN_LED_GPIO        GPIO_NUM_48
-#define BOOT_BUTTON_GPIO        GPIO_NUM_0
-#define TOUCH_BUTTON_GPIO       GPIO_NUM_47
-#define VOLUME_UP_BUTTON_GPIO   GPIO_NUM_40
-#define VOLUME_DOWN_BUTTON_GPIO GPIO_NUM_39
+// КНОПКИ ДЛЯ ESP32-C3 SUPERMINI
+#define BOOT_BUTTON_GPIO        GPIO_NUM_0  // Встроенная кнопка BOOT
+#define TOUCH_BUTTON_GPIO       GPIO_NUM_2  // Твой сенсор TTP223
+#define VOLUME_UP_BUTTON_GPIO   GPIO_NUM_NC // Отключено (NC - Not Connected)
+#define VOLUME_DOWN_BUTTON_GPIO GPIO_NUM_NC // Отключено
 
-#define DISPLAY_SDA_PIN GPIO_NUM_41
-#define DISPLAY_SCL_PIN GPIO_NUM_42
+// ЭКРАН SH1106 НА РОДНОЙ АППАРАТНОЙ ШИНЕ I2C ESP32-C3
+#define DISPLAY_SDA_PIN GPIO_NUM_8   // SDA экрана -> GPIO 8
+#define DISPLAY_SCL_PIN GPIO_NUM_9   // SCL экрана -> GPIO 9
 #define DISPLAY_WIDTH   128
+#define DISPLAY_HEIGHT  64
 
-#if CONFIG_OLED_SSD1306_128X32
-#define DISPLAY_HEIGHT  32
-#elif CONFIG_OLED_SSD1306_128X64
-#define DISPLAY_HEIGHT  64
-#elif CONFIG_OLED_SH1106_128X64
-#define DISPLAY_HEIGHT  64
+// ПРИНУДИТЕЛЬНО ВКЛЮЧАЕМ SH1106
 #define SH1106
-#else
-#error "OLED display type is not selected"
-#endif
 
 #define DISPLAY_MIRROR_X true
 #define DISPLAY_MIRROR_Y true
-
-
-#define NT26_DTR_PIN    GPIO_NUM_9
-#define NT26_RI_PIN     GPIO_NUM_10
-#define NT26_RX_PIN     GPIO_NUM_11
-#define NT26_TX_PIN     GPIO_NUM_12
-
-
-// A MCP Test: Control a lamp
-#define LAMP_GPIO GPIO_NUM_18
 
 #endif // _BOARD_CONFIG_H_
