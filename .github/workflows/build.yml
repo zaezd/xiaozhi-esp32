@@ -19,11 +19,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build current variant
+      - name: List boards and build
         shell: bash
         run: |
           source $IDF_PATH/export.sh
-          python scripts/build.py boards/bread-compact-nt26 --name bread-compact-nt26
+          echo "=== СПИСОК ДОСТУПНЫХ ПЛАТ ==="
+          python scripts/build.py --list-boards || true
+          echo "=== НАЧИНАЕМ СБОРКУ BREAD-COMPACT-NT26 ==="
+          python scripts/build.py bread-compact-nt26 --name bread-compact-nt26
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
