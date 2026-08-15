@@ -1,6 +1,6 @@
 {
     "type": "bread-compact-nt26",
-    "target": "esp32s3",
+    "target": "esp32c3",
     "builds": [
         {
             "name": "bread-compact-nt26",
