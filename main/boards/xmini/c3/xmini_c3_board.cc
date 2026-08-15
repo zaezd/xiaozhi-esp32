@@ -43,8 +43,8 @@ private:
         // Initialize I2C peripheral
         i2c_master_bus_config_t i2c_bus_cfg = {
             .i2c_port = I2C_NUM_0,
-            .sda_io_num = AUDIO_CODEC_I2C_SDA_PIN,
-            .scl_io_num = AUDIO_CODEC_I2C_SCL_PIN,
+            .sda_io_num = GPIO_NUM_6, // Вместо AUDIO_CODEC_I2C_SDA_PIN
+            .scl_io_num = GPIO_NUM_7, // Вместо AUDIO_CODEC_I2C_SCL_PIN
             .clk_source = I2C_CLK_SRC_DEFAULT,
             .glitch_ignore_cnt = 7,
             .intr_priority = 0,
@@ -60,12 +60,14 @@ private:
         // present before continuing. i2c_master_probe() only checks for an ACK,
         // which can be a false positive on a wrong board (floating / weakly
         // pulled SDA). Instead, verify the ES8311 chip ID registers.
+        /*
         if (!IsEs8311Present()) {
             while (true) {
                 ESP_LOGE(TAG, "ES8311 not detected, please check if you have installed the correct firmware");
                 vTaskDelay(1000 / portTICK_PERIOD_MS);
             }
         }
+        */
     }
 
     // Read the ES8311 chip ID registers (0xFD/0xFE should return 0x83/0x11).
