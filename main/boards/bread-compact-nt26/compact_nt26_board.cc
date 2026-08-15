@@ -34,8 +34,8 @@ private:
     void InitializeDisplayI2c() {
         i2c_master_bus_config_t bus_config = {
             .i2c_port = (i2c_port_t)0,
-            .sda_io_num = DISPLAY_SDA_PIN,
-            .scl_io_num = DISPLAY_SCL_PIN,
+            .sda_io_num = GPIO_NUM_6,
+            .scl_io_num = GPIO_NUM_7,
             .clk_source = I2C_CLK_SRC_DEFAULT,
             .glitch_ignore_cnt = 7,
             .intr_priority = 0,
