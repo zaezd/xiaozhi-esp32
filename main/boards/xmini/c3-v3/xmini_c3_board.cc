@@ -17,6 +17,7 @@
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_ops.h>
 #include <esp_lcd_panel_vendor.h>
+#include <esp_lcd_sh1106.h>
 
 #define TAG "XminiC3Board"
 
@@ -54,11 +55,11 @@ private:
     }
 
     void InitializeCodecI2c() {
-        // Initialize I2C peripheral
+        // Initialize I2C peripheral on GPIO 6 and GPIO 7
         i2c_master_bus_config_t i2c_bus_cfg = {
             .i2c_port = I2C_NUM_0,
-            .sda_io_num = AUDIO_CODEC_I2C_SDA_PIN,
-            .scl_io_num = AUDIO_CODEC_I2C_SCL_PIN,
+            .sda_io_num = GPIO_NUM_6,
+            .scl_io_num = GPIO_NUM_7,
             .clk_source = I2C_CLK_SRC_DEFAULT,
             .glitch_ignore_cnt = 7,
             .intr_priority = 0,
@@ -69,13 +70,15 @@ private:
         };
         ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_cfg, &codec_i2c_bus_));
 
-        // Print I2C bus info
+        // Commented out ES8311 blocking probe to avoid freeze on board start
+        /*
         if (i2c_master_probe(codec_i2c_bus_, 0x18, 1000) != ESP_OK) {
             while (true) {
                 ESP_LOGE(TAG, "Failed to probe I2C bus, please check if you have installed the correct firmware");
                 vTaskDelay(1000 / portTICK_PERIOD_MS);
             }
         }
+        */
     }
 
     void InitializeSsd1306Display() {
