@@ -1361,3 +1361,11 @@ if ("${size}" AND "${offset}")
 else()
     message(STATUS "Assets partition not found, using v1 partition table")
 endif()
+idf_component_register(
+    SRCS ${SOURCES}
+    INCLUDE_DIRS ${INCLUDE_DIRS}
+    PRIV_REQUIRES
+        tny-robotics__sh1106-esp-idf
+        esp_lcd
+        driver
+)
