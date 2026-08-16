@@ -12,7 +12,7 @@
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_ops.h>
 #include <esp_lcd_panel_vendor.h>
-#include <esp_lcd_panel_sh1106.h> // Заголовок SH1106 подключен всегда
+#include <esp_lcd_panel_sh1106.h>
 #include <esp_log.h>
 
 #define TAG "CompactNt26Board"
@@ -46,10 +46,10 @@ private:
     }
 
     void InitializeOledDisplay() {
-        // OLED config
+        // OLED I2C Transport Config
         esp_lcd_panel_io_i2c_config_t io_config = {
             .dev_addr = 0x3C,
-            .scl_speed_hz = 100 * 1000, // Снижено до 100 кГц для защиты от помех
+            .scl_speed_hz = 100 * 1000, // 100 kHz
             .control_phase_bytes = 1,
             .dc_bit_offset = 6,
             .lcd_cmd_bits = 8,
@@ -69,24 +69,32 @@ private:
         esp_lcd_panel_dev_config_t panel_config = {};
         panel_config.reset_gpio_num = GPIO_NUM_NC;
         panel_config.bits_per_pixel = 1;
+        panel_config.vendor_config = nullptr; // Явно сбрасываем чужие конфиги
 
-        // Прямой вызов драйвера SH1106 без макросов #ifdef
         ESP_ERROR_CHECK(esp_lcd_new_panel_sh1106(panel_io_, &panel_config, &panel_));
         ESP_LOGI(TAG, "SH1106 OLED driver installed");
 
-        // Сброс и инициализация панели
+        // Сброс панели
         ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_));
+        
+        // Инициализация аппаратного контроллера
         if (esp_lcd_panel_init(panel_) != ESP_OK) {
             ESP_LOGE(TAG, "Failed to initialize display");
             display_ = new NoDisplay();
             return;
         }
+
+        // Задаем смещение 2 пикселя по Х для SH1106 (132x64 буфер -> 128x64 физический экран)
+        esp_lcd_panel_set_gap(panel_, 2, 0);
+
+        // Инверсия цветов (false = нормальный режим)
         ESP_ERROR_CHECK(esp_lcd_panel_invert_color(panel_, false));
 
-        // Включение отображения
+        // Включаем отображение
         ESP_LOGI(TAG, "Turning display on");
         ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_, true));
 
+        // Создаем экземпляр Display для фреймворка
         display_ = new OledDisplay(panel_io_, panel_, DISPLAY_WIDTH, DISPLAY_HEIGHT,
                                    DISPLAY_MIRROR_X, DISPLAY_MIRROR_Y);
     }
