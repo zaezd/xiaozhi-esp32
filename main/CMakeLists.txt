@@ -1059,6 +1059,8 @@ if(CONFIG_BOARD_TYPE_ESP32_P4_FUNCTION_EV_BOARD)
 endif()
 
 # ЕДИНСТВЕННЫЙ ВЫЗОВ РЕГИСТРАЦИИ КОМПОНЕНТА
+list(APPEND INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/managed_components/tny-robotics__sh1106-esp-idf/include")
+
 idf_component_register(SRCS ${SOURCES}
                     EMBED_FILES ${LANG_SOUNDS} ${COMMON_SOUNDS}
                     INCLUDE_DIRS ${INCLUDE_DIRS}
@@ -1091,7 +1093,6 @@ idf_component_register(SRCS ${SOURCES}
                         driver
                         ${MAIN_PRIV_REQUIRES_EXTRA}
                     )
-
 # Use target_compile_definitions to define the reported board identity
 # If BOARD_NAME is empty, use BOARD_TYPE
 if(NOT BOARD_NAME)
