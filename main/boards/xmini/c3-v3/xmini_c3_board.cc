@@ -17,7 +17,7 @@
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_ops.h>
 #include <esp_lcd_panel_vendor.h>
-#include <esp_lcd_sh1106.h>
+#include <esp_lcd_panel_sh1106.h>
 
 #define TAG "XminiC3Board"
 
