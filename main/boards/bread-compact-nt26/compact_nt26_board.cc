@@ -7,7 +7,6 @@
 #include "display/oled_display.h"
 #include "lamp_controller.h"
 #include "led/single_led.h"
-#include "nt26_board.h"
 
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_ops.h>
@@ -17,7 +16,7 @@
 
 #define TAG "CompactNt26Board"
 
-class CompactNt26Board : public Nt26Board {
+class CompactNt26Board : public Board {
 private:
     i2c_master_bus_handle_t display_i2c_bus_;
     esp_lcd_panel_io_handle_t panel_io_ = nullptr;
@@ -69,7 +68,7 @@ private:
         esp_lcd_panel_dev_config_t panel_config = {};
         panel_config.reset_gpio_num = GPIO_NUM_NC;
         panel_config.bits_per_pixel = 1;
-        panel_config.vendor_config = nullptr; // Явно сбрасываем чужие конфиги
+        panel_config.vendor_config = nullptr;
 
         ESP_ERROR_CHECK(esp_lcd_new_panel_sh1106(panel_io_, &panel_config, &panel_));
         ESP_LOGI(TAG, "SH1106 OLED driver installed");
@@ -140,8 +139,7 @@ private:
 
 public:
     CompactNt26Board()
-        : Nt26Board(NT26_TX_PIN, NT26_RX_PIN, NT26_DTR_PIN, NT26_RI_PIN),
-          boot_button_(BOOT_BUTTON_GPIO),
+        : boot_button_(BOOT_BUTTON_GPIO),
           touch_button_(TOUCH_BUTTON_GPIO),
           volume_up_button_(VOLUME_UP_BUTTON_GPIO),
           volume_down_button_(VOLUME_DOWN_BUTTON_GPIO) {
@@ -152,8 +150,7 @@ public:
     }
 
     virtual void StartNetwork() override {
-        GetDisplay()->SetStatus(Lang::Strings::DETECTING_MODULE);
-        Nt26Board::StartNetwork();
+        Board::StartNetwork();
     }
 
     virtual Led* GetLed() override {
