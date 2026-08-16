@@ -12,11 +12,8 @@
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_ops.h>
 #include <esp_lcd_panel_vendor.h>
+#include <esp_lcd_panel_sh1106.h> // Заголовок SH1106 подключен всегда
 #include <esp_log.h>
-
-#ifdef SH1106
-#include <esp_lcd_panel_sh1106.h>
-#endif
 
 #define TAG "CompactNt26Board"
 
@@ -52,7 +49,7 @@ private:
         // OLED config
         esp_lcd_panel_io_i2c_config_t io_config = {
             .dev_addr = 0x3C,
-            .scl_speed_hz = 400 * 1000,
+            .scl_speed_hz = 100 * 1000, // Снижено до 100 кГц для защиты от помех
             .control_phase_bytes = 1,
             .dc_bit_offset = 6,
             .lcd_cmd_bits = 8,
@@ -68,24 +65,16 @@ private:
 
         ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(display_i2c_bus_, &io_config, &panel_io_));
 
-        ESP_LOGI(TAG, "Install OLED driver");
+        ESP_LOGI(TAG, "Install SH1106 OLED driver");
         esp_lcd_panel_dev_config_t panel_config = {};
         panel_config.reset_gpio_num = GPIO_NUM_NC;
         panel_config.bits_per_pixel = 1;
 
-        esp_lcd_panel_ssd1306_config_t ssd1306_config = {
-            .height = static_cast<uint8_t>(DISPLAY_HEIGHT),
-        };
-        panel_config.vendor_config = &ssd1306_config;
-
-#ifdef SH1106
+        // Прямой вызов драйвера SH1106 без макросов #ifdef
         ESP_ERROR_CHECK(esp_lcd_new_panel_sh1106(panel_io_, &panel_config, &panel_));
-#else
-        ESP_ERROR_CHECK(esp_lcd_new_panel_ssd1306(panel_io_, &panel_config, &panel_));
-#endif
-        ESP_LOGI(TAG, "OLED driver installed");
+        ESP_LOGI(TAG, "SH1106 OLED driver installed");
 
-        // Reset the display
+        // Сброс и инициализация панели
         ESP_ERROR_CHECK(esp_lcd_panel_reset(panel_));
         if (esp_lcd_panel_init(panel_) != ESP_OK) {
             ESP_LOGE(TAG, "Failed to initialize display");
@@ -94,7 +83,7 @@ private:
         }
         ESP_ERROR_CHECK(esp_lcd_panel_invert_color(panel_, false));
 
-        // Set the display to on
+        // Включение отображения
         ESP_LOGI(TAG, "Turning display on");
         ESP_ERROR_CHECK(esp_lcd_panel_disp_on_off(panel_, true));
 
@@ -139,7 +128,6 @@ private:
         });
     }
 
-    // 物联网初始化，添加对 AI 可见设备
     void InitializeTools() { static LampController lamp(LAMP_GPIO); }
 
 public:
