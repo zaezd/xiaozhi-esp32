@@ -1057,6 +1057,8 @@ if(CONFIG_BOARD_TYPE_ESP32_P4_FUNCTION_EV_BOARD)
         sdmmc
     )
 endif()
+
+# ЕДИНСТВЕННЫЙ ВЫЗОВ РЕГИСТРАЦИИ КОМПОНЕНТА
 idf_component_register(SRCS ${SOURCES}
                     EMBED_FILES ${LANG_SOUNDS} ${COMMON_SOUNDS}
                     INCLUDE_DIRS ${INCLUDE_DIRS}
@@ -1084,6 +1086,9 @@ idf_component_register(SRCS ${SOURCES}
                         bt
                         fatfs
                         xiaozhi-fonts
+                        tny-robotics__sh1106-esp-idf
+                        esp_lcd
+                        driver
                         ${MAIN_PRIV_REQUIRES_EXTRA}
                     )
 
@@ -1361,11 +1366,3 @@ if ("${size}" AND "${offset}")
 else()
     message(STATUS "Assets partition not found, using v1 partition table")
 endif()
-idf_component_register(
-    SRCS ${SOURCES}
-    INCLUDE_DIRS ${INCLUDE_DIRS}
-    PRIV_REQUIRES
-        tny-robotics__sh1106-esp-idf
-        esp_lcd
-        driver
-)
